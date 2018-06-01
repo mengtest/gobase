@@ -15,19 +15,15 @@ Version Description	:
 
 package resident
 
-import (
-	"time"
-)
-
 // linkedList 为一个单向列表
-type linkedList struct {
+type stack struct {
 	length     int
 	head, tail *element
 }
 
-func newLinkedList() *linkedList {
+func newStack() *stack {
 	ele := elePool.get()
-	return &linkedList{
+	return &stack{
 		length: 0,
 		head:   ele,
 		tail:   ele,
@@ -36,9 +32,8 @@ func newLinkedList() *linkedList {
 
 // element 为单向列表中的元素
 type element struct {
-	data         interface{}
-	next         *element
-	nextDeadTime time.Time
+	data interface{}
+	next *element
 }
 
 func newElement() *element {
@@ -52,11 +47,6 @@ func (ele *element) SetData(data interface{}) {
 	ele.data = data
 }
 
-// SetNextDeadTime 用于设置下次的死亡时间
-func (ele *element) SetNextDeadTime(t time.Time) {
-	ele.nextDeadTime = t
-}
-
 // Reset 用于重置元素
 func (ele *element) Reset() {
 	ele.data = nil
@@ -64,14 +54,14 @@ func (ele *element) Reset() {
 }
 
 // Push 用于向linkedList的末尾追加元素
-func (ll *linkedList) Push(ele *element) {
+func (ll *stack) Push(ele *element) {
 	ll.tail.next = ele
 	ll.tail = ele
 	ll.length++
 }
 
 // Pop 用于从头节点删除一个元素
-func (ll *linkedList) Pop() *element {
+func (ll *stack) Pop() *element {
 	var retEle *element
 	retEle = nil
 	if ll.length != 0 {

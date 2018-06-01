@@ -48,6 +48,20 @@ func NewPool(create func() interface{},
 
 }
 
+// Release 用于释放驻留式池
+func (p *Pool) Release() {
+	p.lock.Lock()
+	defer p.lock.Unlock()
+	var ele *element
+	for {
+		ele = p.queue.Pop()
+		if ele == nil {
+			break
+		}
+		p.Close(ele.data)
+	}
+}
+
 // Put 用于释放一个连接
 func (p *Pool) Put(connect interface{}) {
 	p.lock.Lock()
