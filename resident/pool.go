@@ -15,8 +15,15 @@ Version Description	:
 
 package resident
 
+import (
+	"runtime"
+	"sync"
+	"time"
+)
+
 // Pool 用于一个池子
 type Pool struct {
+	lock  sync.Mutex
 	queue *stack
 	New   func() interface{}
 	Close func(interface{})
@@ -38,4 +45,55 @@ func NewPoolWith(capacity int,
 		pPool.queue.Push(ele)
 	}
 	return pPool
+}
+
+// Release 用于释放池中的元素
+func (p *Pool) Release() {
+	var ele *element
+	for {
+		ele = p.queue.Pop()
+		if ele == nil {
+			break
+		}
+		p.Close(ele.data)
+	}
+}
+
+// Get 用于获取一个对象
+func (p *Pool) Get() interface{} {
+	var data interface{}
+	var isGet bool
+	for {
+		data, isGet = get(p)
+		if isGet {
+			break
+		}
+		time.Sleep(time.Millisecond)
+		runtime.Gosched()
+	}
+
+	return data
+}
+func get(p *Pool) (interface{}, bool) {
+	var data interface{}
+	isGet := false
+	p.lock.Lock()
+	defer p.lock.Unlock()
+	ele := p.queue.Pop()
+	if ele != nil {
+		data = ele.data
+		isGet = true
+		ele.Reset()
+		elePool.put(ele)
+	}
+	return data, isGet
+}
+
+// Put 用于还回元素
+func (p *Pool) Put(data interface{}) {
+	p.lock.Lock()
+	p.lock.Unlock()
+	ele := elePool.get()
+	ele.data = data
+	p.queue.Push(ele)
 }
