@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+<title>websocket 测试</title>    
+<head></head>  
+<body>
+    <h1> websocket test </h1>
+    <div style="width:100%; height:50px;">
+           <button type="button" name="发送时间" value="登录"  onclick="onLogin()" style="width:200px;height:50px;">Login</button>
+    </div>
+
+    <div id = "screen">
+
+    </div>
+   
+
+<script lanuage="javascript" type="text/javascript">
+    var output = document.getElementById("screen")
+    var url = "ws://172.16.0.79:12345/"; 
+    var ws 
+    
+    function onLogin() {
+         var object = new Object()
+         object.code = 1003
+         object.uid = 1001
+         object.token = "yuansudong"
+         console.log(JSON.stringify(object))
+         ws.send(JSON.stringify(object))
+    }
+
+    function init(){
+    ws  = new WebSocket(url);
+    ws.onopen =  function (evt) {
+          Show("websocket open event:" +JSON.stringify(evt));      
+     }
+     ws.onmessage = function(message){
+          Show("websocket receive message"+message.data)
+          jsonObject = JSON.parse(message.data);
+          if (jsonObject.code == 1000) {
+              ws.send(message.data)
+          }
+     };
+     ws.onerror = function(event){
+         Show("websocket error"+ JSON.stringify(event))
+                
+     };
+     ws.onclose =  function(event){
+         Show("websocket close"+JSON.stringify(event))
+
+     };
+    }
+    function Show(message) { 
+    var pre = document.createElement("p"); 
+    pre.style.wordWrap = "break-word"; 
+    pre.innerHTML = message; 
+    output.appendChild(pre); 
+    };
+    window.addEventListener("load",init,false);
+</script>
+
+
+
+
+    
+
+</body>
+</html>
+
+
