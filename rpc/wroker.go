@@ -15,6 +15,56 @@ Version Description	:
 
 package rpc
 
+import (
+	"fmt"
+	"runtime"
+	"time"
+)
+
 // worker 工人
 type worker struct {
+	channel      chan []byte
+	nextDeadTime time.Time
+	next         *worker
+}
+
+func newWoker() *worker {
+	pWorker := &worker{
+		channel: nil,
+	}
+	return pWorker
+}
+
+func (w *worker) reset() {
+	close(w.channel)
+	w.channel = nil
+}
+
+func (w *worker) run(l *leader) {
+	if w.channel == nil {
+		w.channel = make(chan []byte, 1)
+		go work(l, w)
+	}
+}
+
+func work(l *leader, w *worker) {
+	var task []byte
+	var isClose bool
+	for {
+		select {
+		case task, isClose = <-w.channel:
+			if isClose {
+				goto end
+			} else {
+				fmt.Println("有任务到来" + string(task))
+				// 处理数据
+				l.put(w)
+			}
+			// 处理完成后需要将该工人放回去
+		default:
+			time.Sleep(time.Nanosecond)
+			runtime.Gosched()
+		}
+	}
+end:
 }
