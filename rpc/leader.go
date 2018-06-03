@@ -16,9 +16,13 @@ Version Description	:
 package rpc
 
 import (
+	"gobase/logger"
 	"runtime"
 	"sync"
+	"sync/atomic"
 	"time"
+
+	"github.com/go-mangos/mangos"
 )
 
 // leader 用于描述领导者
@@ -27,6 +31,7 @@ type leader struct {
 	wmDead   *workerMgr
 	wmlock   sync.Mutex
 	idleTime time.Duration
+	isQuit   bool
 }
 
 func newLeader(maxWorkerCount int,
@@ -35,6 +40,7 @@ func newLeader(maxWorkerCount int,
 		wmIdle:   newWokerMgr(),
 		wmDead:   newWokerMgr(),
 		idleTime: idleTime,
+		isQuit:   false,
 	}
 	for i := 0; i < maxWorkerCount; i++ {
 		pLeader.wmDead.push(newWoker())
@@ -89,4 +95,30 @@ func getLogic(l *leader) (*worker, bool) {
 		}
 	}
 	return w, isGet
+}
+
+func (l *leader) Run(server *Server) {
+	go runLogic(server, l)
+}
+func runLogic(server *Server, l *leader) {
+	atomic.AddInt32(&server.leaderCount, 1)
+	var work *worker
+	for {
+		if l.isQuit {
+			goto end
+		}
+		message, err := server.socket.RecvMsg()
+		if err != nil {
+			if err == mangos.ErrRecvTimeout {
+				logger.Debug("发生了读取超时的错误")
+			} else {
+				logger.Debug("发生了位置的错误:" + err.Error())
+			}
+		} else {
+			work = l.get()
+			work.dispatch(message, server.socket)
+		}
+	}
+end:
+	atomic.AddInt32(&server.leaderCount, -1)
 }

@@ -19,11 +19,13 @@ import (
 	"fmt"
 	"runtime"
 	"time"
+
+	"github.com/go-mangos/mangos"
 )
 
 // worker 工人
 type worker struct {
-	channel      chan []byte
+	channel      chan *packet
 	nextDeadTime time.Time
 	next         *worker
 }
@@ -42,13 +44,20 @@ func (w *worker) reset() {
 
 func (w *worker) run(l *leader) {
 	if w.channel == nil {
-		w.channel = make(chan []byte, 1)
+		w.channel = make(chan *packet, 1)
 		go work(l, w)
 	}
 }
 
+func (w *worker) dispatch(message *mangos.Message, socket mangos.Socket) {
+	p := getPacket()
+	p.msg = message
+	p.socket = socket
+	w.channel <- p
+}
+
 func work(l *leader, w *worker) {
-	var task []byte
+	var task *packet
 	var isClose bool
 	for {
 		select {
@@ -56,8 +65,10 @@ func work(l *leader, w *worker) {
 			if isClose {
 				goto end
 			} else {
-				fmt.Println("有任务到来" + string(task))
+				fmt.Println("有任务到来" + string(task.msg.Body))
 				// 处理数据
+
+				putPacket(task)
 				l.put(w)
 			}
 			// 处理完成后需要将该工人放回去

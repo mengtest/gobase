@@ -1,9 +1,9 @@
 package rpc
 
 var (
-	workerModel string
+	packetModel string
 )
 
 func init() {
-	workerModel = "worker"
+	packetModel = "packet"
 }
