@@ -16,7 +16,6 @@ Version Description	:
 package rpc
 
 import (
-	"fmt"
 	"runtime"
 	"time"
 
@@ -65,9 +64,8 @@ func work(l *leader, w *worker) {
 			if isClose {
 				goto end
 			} else {
-				fmt.Println("有任务到来" + string(task.msg.Body))
-				// 处理数据
-
+				task.msg.Body = servicesMgr.Execute(task.msg.Body)
+				task.socket.SendMsg(task.msg)
 				putPacket(task)
 				l.put(w)
 			}

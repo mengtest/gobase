@@ -62,6 +62,11 @@ func NewServerWith(url string) *Server {
 	return pServer
 }
 
+// RegisterService 用于注册服务
+func (s *Server) RegisterService(i interface{}) {
+	servicesMgr.Register(i)
+}
+
 // Run 用于运行
 func (s *Server) Run() {
 	for i := 0; i < runtime.NumCPU(); i++ {
