@@ -48,9 +48,17 @@ func NewSingleWith(service interface{}) (string, *Single) {
 }
 
 // Execute 用于执行函数
-func (s *Single) Execute(functionName string) {
+func (s *Single) Execute(functionName string, data []byte) (retData []byte) {
+	defer func() {
+		if err := recover(); err != nil {
+			retData = err.([]byte)
+		}
+	}()
+	retData = unknownMethodDesc
 	if function, ok := s.action[functionName]; ok {
-		in := make([]reflect.Value, 0)
-		function.Call(in)
+		in := make([]reflect.Value, 1)
+		in[0] = reflect.ValueOf(data)
+		retData = function.Call(in)[0].Bytes()
 	}
+	return retData
 }

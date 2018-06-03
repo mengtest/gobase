@@ -1,19 +1,17 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 )
 
-type Test1 struct {
-}
-
-// Hello 用于测试
-func (t *Test1) Hello() {
-	fmt.Println("hello world")
-}
-
-func TestSingle(t *testing.T) {
-	h := newSingleWith(&Test1{})
-	h.execute("Hello")
+func TestJson(t *testing.T) {
+	p := newPacket()
+	p.ServiceName = "yuansudong"
+	data, err := json.Marshal(p)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(data))
 }
