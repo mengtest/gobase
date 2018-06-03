@@ -13,7 +13,7 @@ Version Description	:
 					|------------------------------------------------------------|
 ***************************************************************************************/
 
-package rpc
+package pull
 
 import (
 	"gobase/logger"
@@ -103,11 +103,13 @@ func (l *leader) Run(server *Server) {
 func runLogic(server *Server, l *leader) {
 	atomic.AddInt32(&server.leaderCount, 1)
 	var work *worker
+	var message *mangos.Message
+	var err error
 	for {
 		if l.isQuit {
 			goto end
 		}
-		message, err := server.socket.RecvMsg()
+		message, err = server.socket.RecvMsg()
 		if err != nil {
 			if err == mangos.ErrRecvTimeout {
 				logger.Debug("发生了读取超时的错误")
@@ -116,7 +118,7 @@ func runLogic(server *Server, l *leader) {
 			}
 		} else {
 			work = l.get()
-			work.dispatch(message, server.socket)
+			work.dispatch(message.Body)
 		}
 		l.check()
 	}
