@@ -3,9 +3,9 @@ package rpc
 import (
 	"time"
 
-	"github.com/go-mangos/mangos"
-	"github.com/go-mangos/mangos/protocol/req"
-	"github.com/go-mangos/mangos/transport/tcp"
+	"nanomsg.org/go-mangos"
+	"nanomsg.org/go-mangos/protocol/req"
+	"nanomsg.org/go-mangos/transport/tcp"
 )
 
 type client struct {
@@ -24,8 +24,8 @@ func newClient() *client {
 
 func (c *client) build(cp *ClientPool) error {
 	c.socket.SetOption(mangos.OptionReconnectTime, time.Millisecond)
-	c.socket.SetOption(mangos.OptionSendDeadline, time.Second)
-	c.socket.SetOption(mangos.OptionRecvDeadline, time.Second)
+	c.socket.SetOption(mangos.OptionSendDeadline, time.Second*10)
+	c.socket.SetOption(mangos.OptionRecvDeadline, time.Second*10)
 	return c.socket.Dial(cp.addr)
 }
 

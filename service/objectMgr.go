@@ -13,12 +13,16 @@ func init() {
 	objectMgr.Register(packetModel, createPacket)
 }
 func createPacket() interface{} {
-	return newPacket()
+	return NewPacket()
 
 }
-func getPacket() *packet {
-	return objectMgr.Get(packetModel).(*packet)
+
+// GetPacket 用于获取一个Packet 包
+func GetPacket() *Packet {
+	return objectMgr.Get(packetModel).(*Packet)
 }
-func putPacket(p *packet) {
+
+// PutPacket 用于释放一个包
+func PutPacket(p *Packet) {
 	objectMgr.Put(packetModel, p)
 }

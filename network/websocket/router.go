@@ -2,7 +2,7 @@ package websocket
 
 import (
 	"encoding/json"
-	"fmt"
+	"gobase/logger"
 )
 
 const (
@@ -61,7 +61,7 @@ func (r *router) AddFunction(code int, callBack FuncRouterCallBack) {
 func (r *router) Execute(session *Session, request []byte) {
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println(err)
+			logger.Debug(err)
 		}
 	}()
 	m := map[string]interface{}{}

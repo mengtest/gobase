@@ -1,6 +1,9 @@
 package rpc
 
 import (
+	"encoding/json"
+	"gobase/logger"
+	"gobase/service"
 	"runtime"
 	"sync"
 	"time"
@@ -91,12 +94,26 @@ func getClientLogic(cp *ClientPool) (*client, bool) {
 }
 
 // Call 用于进行调用
-func (cp *ClientPool) Call(data []byte) (retData []byte, err error) {
+func (cp *ClientPool) Call(serviceName string, methodName string, data []byte) (retData []byte, err error) {
 	c := cp.get()
 	defer cp.put(c)
-	if err = c.socket.Send(data); err != nil {
-		return retData, err
+	p := service.GetPacket()
+	p.Data = data
+	p.ServiceMethod = methodName
+	p.ServiceName = serviceName
+	sendData, _ := json.Marshal(p)
+	logger.Debug("转换出来发送的数据是:" + string(sendData))
+	if err = c.socket.Send(sendData); err != nil {
+		retData = []byte(err.Error())
+		goto end
 	}
-	retData, err = c.socket.Recv()
+	if retData, err = c.socket.Recv(); err != nil {
+		retData = []byte(err.Error())
+		goto end
+	}
+	json.Unmarshal(retData, p)
+	retData = p.Data
+end:
+	service.PutPacket(p)
 	return retData, err
 }

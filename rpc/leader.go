@@ -22,7 +22,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/go-mangos/mangos"
+	"nanomsg.org/go-mangos"
 )
 
 // leader 用于描述领导者
@@ -110,7 +110,6 @@ func runLogic(server *Server, l *leader) {
 		message, err := server.socket.RecvMsg()
 		if err != nil {
 			if err == mangos.ErrRecvTimeout {
-				logger.Debug("发生了读取超时的错误")
 			} else {
 				logger.Debug("发生了位置的错误:" + err.Error())
 			}
@@ -119,6 +118,7 @@ func runLogic(server *Server, l *leader) {
 			work.dispatch(message, server.socket)
 		}
 		l.check()
+		time.Sleep(100)
 	}
 end:
 	atomic.AddInt32(&server.leaderCount, -1)

@@ -1,8 +1,6 @@
 package rpc
 
-import (
-	"github.com/go-mangos/mangos"
-)
+import "nanomsg.org/go-mangos"
 
 type packet struct {
 	msg    *mangos.Message

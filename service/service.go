@@ -45,7 +45,7 @@ func (s *Service) Register(service interface{}) {
 
 // Execute 用于执行相应的数据体
 func (s *Service) Execute(request []byte) []byte {
-	p := getPacket()
+	p := GetPacket()
 	var err error
 	var single *Single
 	var ok bool
@@ -63,8 +63,8 @@ func (s *Service) Execute(request []byte) []byte {
 		p.ServiceMethod = unknownMethod
 		p.Data = unknownServiceDesc
 	}
-
 end:
 	data, _ := json.Marshal(p)
+	PutPacket(p)
 	return data
 }

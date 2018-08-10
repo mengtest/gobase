@@ -17,6 +17,7 @@ package service
 
 import (
 	"reflect"
+	"strings"
 )
 
 // Single 是服务的一个实例
@@ -38,13 +39,13 @@ func NewSingleWith(service interface{}) (string, *Single) {
 			FuncMethodValue := value.MethodByName(FuncMethod.Name)
 			c := FuncMethod.Name[0]
 			if c >= 'A' && c <= 'Z' {
-				pSingle.action[FuncMethod.Name] = FuncMethodValue
+				pSingle.action[strings.ToLower(FuncMethod.Name)] = FuncMethodValue
 			}
 		}
 	} else {
 		panic("your register service is not pointer")
 	}
-	return value.Elem().Type().Name(), pSingle
+	return strings.ToLower(value.Elem().Type().Name()), pSingle
 }
 
 // Execute 用于执行函数

@@ -19,7 +19,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/go-mangos/mangos"
+	mangos "nanomsg.org/go-mangos"
 )
 
 // worker 工人
@@ -61,13 +61,15 @@ func work(l *leader, w *worker) {
 	for {
 		select {
 		case task, isClose = <-w.channel:
-			if isClose {
-				goto end
-			} else {
+			if task != nil {
 				task.msg.Body = servicesMgr.Execute(task.msg.Body)
 				task.socket.SendMsg(task.msg)
 				putPacket(task)
 				l.put(w)
+			}
+
+			if isClose {
+				goto end
 			}
 			// 处理完成后需要将该工人放回去
 		default:

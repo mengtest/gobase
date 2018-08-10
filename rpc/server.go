@@ -20,9 +20,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/go-mangos/mangos"
-	"github.com/go-mangos/mangos/protocol/rep"
-	"github.com/go-mangos/mangos/transport/tcp"
+	"nanomsg.org/go-mangos"
+	"nanomsg.org/go-mangos/protocol/rep"
+	"nanomsg.org/go-mangos/transport/tcp"
 )
 
 var (
@@ -71,6 +71,9 @@ func (s *Server) RegisterService(i interface{}) {
 func (s *Server) Run() {
 	for i := 0; i < runtime.NumCPU(); i++ {
 		s.leaders[i].Run(s)
+	}
+	for {
+		time.Sleep(1000)
 	}
 }
 
