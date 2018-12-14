@@ -63,4 +63,6 @@ const (
 	ActionConstellationTagNotIsExists = 20029
 	// ActionUnknownWishingID 未知的许愿ID
 	ActionUnknownWishingID = 20030
+	// ActionNotFoundRank 没有找到该排名
+	ActionNotFoundRank = 20031
 )
