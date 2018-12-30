@@ -65,4 +65,37 @@ const (
 	ActionUnknownWishingID = 20030
 	// ActionNotFoundRank 没有找到该排名
 	ActionNotFoundRank = 20031
+	// ActionNotRepeatedClick 不能重复点击
+	ActionNotRepeatedClick = 20032
+	// ActionUnknownPeroperty 未知的属性ID
+	ActionUnknownPeroperty = 30033
+	// ActionUnknownBuffStarNum 未知的buff星星
+	ActionUnknownBuffStarNum = 30034
+
+	// ActionShareCountLimit 分享次数被限制
+	ActionShareCountLimit = 30035
+	// ActionCofigureErr 配置错误
+	ActionCofigureErr = 30036
+	// ActionUnknownShopID 未知的shopID
+	ActionUnknownShopID = 30037
+	// ActionBillIsNotEnough 金币不足
+	ActionBillIsNotEnough = 30038
+	// ActionNumIsNotEnough 数量不够
+	ActionNumIsNotEnough = 30038
+	// ActionStoveNotIdleOrExists 灶台被占用或者未开启或者不存在
+	ActionStoveNotIdleOrExists = 30039
+	// ActionFormalIDIsLegitimate 配方ID不合法
+	ActionFormalIDIsLegitimate = 30040
+	// ActionDoDishedFailed 做菜失败
+	ActionDoDishedFailed = 30041
+	// ActionFormalIsNotIdle 菜谱不空闲
+	ActionFormalIsNotIdle = 30042
+	// ActionOutStoveFailed 出灶台失败
+	ActionOutStoveFailed = 30043
+	// ActionNotGetAward 不能获取奖励
+	ActionNotGetAward = 30044
+	// ActionUnknownID 未知的ID
+	ActionUnknownID = 30045
+	// ActionStoveIsIdle 炉灶是空闲的
+	ActionStoveIsIdle = 30046
 )

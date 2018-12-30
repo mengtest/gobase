@@ -31,6 +31,7 @@ func GetWeiXinOpenID(appid, appSecret, jSCode string) (string, error) {
 	if data, err = ioutil.ReadAll(resp.Body); err != nil {
 		goto end
 	}
+	fmt.Println(string(data))
 	if err = json.Unmarshal(data, wxRespObj); err != nil {
 		goto end
 	}
@@ -42,16 +43,4 @@ end:
 // GetWeiXinUserInfo 用于获取用户数据
 func GetWeiXinUserInfo() {
 
-}
-
-// CheckTextMsgIsLegitimate 用于检测文本消息是否包含违法的内容,true 代表着犯法, false 代表着不违法
-func CheckTextMsgIsLegitimate(appid, appSecret, content string) bool {
-
-	return false
-}
-
-// GetWeixinAccessToken 用于获取微信的访问TOKEN https: //api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
-func GetWeixinAccessToken(appid, appSecret string) string {
-
-	return ""
 }
